@@ -15,10 +15,11 @@ class CreateOtpCodesTable extends Migration
     {
         Schema::create('otp_codes', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('otp_codes');
-            $table->timestamps();
-            $table->date('expired_at');
+            $table->integer('otp');
             $table->uuid('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->dateTime('valid_until');
+            $table->timestamps();
         });
     }
 

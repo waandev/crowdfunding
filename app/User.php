@@ -2,49 +2,17 @@
 
 namespace App;
 
+use App\Traits\UsesUuid;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
+use phpDocumentor\Reflection\Types\Null_;
+use phpDocumentor\Reflection\Types\Nullable;
 
 class User extends Authenticatable
 {
-    use Notifiable;
-
-    /**
-     * The "booting" function of model
-     *
-     * @return void
-     */
-    protected static function boot()
-    {
-        static::creating(function ($model) {
-            if (!$model->getKey()) {
-                $model->{$model->getKeyName()} = (string) Str::uuid();
-            }
-        });
-        parent::boot();
-    }
-
-    /**
-     * Get the value indicating whether the IDs are incrementing.
-     *
-     * @return bool
-     */
-    public function getIncrementing()
-    {
-        return false;
-    }
-
-    /**
-     * Get the auto-incrementing key type.
-     *
-     * @return string
-     */
-    public function getKeyType()
-    {
-        return 'string';
-    }
+    use Notifiable, UsesUuid;
 
     /**
      * The attributes that are mass assignable.
@@ -81,5 +49,21 @@ class User extends Authenticatable
     public function otp_codes()
     {
         return $this->HasOne(Otp_codes::class);
+    }
+
+    public function verified()
+    {
+        if ($this->email_verified_at != null) {
+            return true;
+        }
+        return false;
+    }
+
+    public function isAdmin()
+    {
+        if ($this->role_id == '46254d0e-bcd1-47c8-b00f-c9644cd07aa5') {
+            return true;
+        }
+        return false;
     }
 }
